@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  java-tron:
+    image: tronprotocol/java-tron
+    container_name: java-tron
+    volumes:
+      - /mnt/blockstore/java-tron/:/java-tron/output-directory
+      - /mnt/blockstore/java-tron/logs:/java-tron/logs
+      - /mnt/blockstore/java-tron/config:/java-tron/config
+    ports:
+      - "8090:8090"
+      - "50051:50051"
+      - "5555:5555"
+      - "8595:8545"
+      - "8596:8555"
+      - "8597:8565"
+#      - "9527:9527"
+    command: -c /java-tron/config/main_net_config.conf -d java-tron/output-directory
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - /mnt/blockstore/java-tron/prometheus.yaml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    ports:
+      - "3030:3000"
+    restart: unless-stopped
